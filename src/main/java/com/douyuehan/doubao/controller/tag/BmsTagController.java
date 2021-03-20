@@ -1,9 +1,10 @@
-package com.douyuehan.doubao.controller;
+package com.douyuehan.doubao.controller.tag;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.douyuehan.doubao.common.api.ApiResult;
-import com.douyuehan.doubao.model.entity.BmsPost;
+import com.douyuehan.doubao.controller.BaseController;
+import com.douyuehan.doubao.model.entity.BmsArticle;
 import com.douyuehan.doubao.model.entity.BmsTag;
 import com.douyuehan.doubao.service.IBmsTagService;
 import org.springframework.util.Assert;
@@ -32,7 +33,7 @@ public class BmsTagController extends BaseController {
         wrapper.eq(BmsTag::getName, tagName);
         BmsTag one = bmsTagService.getOne(wrapper);
         Assert.notNull(one, "话题不存在，或已被管理员删除");
-        Page<BmsPost> topics = bmsTagService.selectTopicsByTagId(new Page<>(page, size), one.getId());
+        Page<BmsArticle> topics = bmsTagService.selectTopicsByTagId(new Page<>(page, size), one.getId());
         // 其他热门标签
         Page<BmsTag> hotTags = bmsTagService.page(new Page<>(1, 10),
                 new LambdaQueryWrapper<BmsTag>()

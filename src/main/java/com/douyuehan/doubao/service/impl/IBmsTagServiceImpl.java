@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.douyuehan.doubao.mapper.BmsTagMapper;
-import com.douyuehan.doubao.model.entity.BmsPost;
+import com.douyuehan.doubao.model.entity.BmsArticle;
 import com.douyuehan.doubao.model.entity.BmsTag;
+import com.douyuehan.doubao.service.IBmsArticleService;
 import com.douyuehan.doubao.service.IBmsTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class IBmsTagServiceImpl extends ServiceImpl<BmsTagMapper, BmsTag> implem
     private com.douyuehan.doubao.service.IBmsTopicTagService IBmsTopicTagService;
 
     @Autowired
-    private com.douyuehan.doubao.service.IBmsPostService IBmsPostService;
+    private IBmsArticleService IBmsArticleService;
 
 
     @Override
@@ -47,14 +48,14 @@ public class IBmsTagServiceImpl extends ServiceImpl<BmsTagMapper, BmsTag> implem
     }
 
     @Override
-    public Page<BmsPost> selectTopicsByTagId(Page<BmsPost> topicPage, String id) {
+    public Page<BmsArticle> selectTopicsByTagId(Page<BmsArticle> topicPage, String id) {
 
         // 获取关联的话题ID
         Set<String> ids = IBmsTopicTagService.selectTopicIdsByTagId(id);
-        LambdaQueryWrapper<BmsPost> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(BmsPost::getId, ids);
+        LambdaQueryWrapper<BmsArticle> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(BmsArticle::getId, ids);
 
-        return IBmsPostService.page(topicPage, wrapper);
+        return IBmsArticleService.page(topicPage, wrapper);
     }
 
 }

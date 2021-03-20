@@ -1,8 +1,9 @@
-package com.douyuehan.doubao.controller;
+package com.douyuehan.doubao.controller.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.douyuehan.doubao.common.api.ApiResult;
 import com.douyuehan.doubao.common.exception.ApiAsserts;
+import com.douyuehan.doubao.controller.BaseController;
 import com.douyuehan.doubao.model.entity.BmsFollow;
 import com.douyuehan.doubao.model.entity.UmsUser;
 import com.douyuehan.doubao.service.IBmsFollowService;

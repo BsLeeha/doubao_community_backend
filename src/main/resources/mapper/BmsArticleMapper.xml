@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.douyuehan.doubao.mapper.BmsTopicMapper">
-    <resultMap id="topicVO" type="com.douyuehan.doubao.model.vo.PostVO">
+<mapper namespace="com.douyuehan.doubao.mapper.BmsArticleMapper">
+    <resultMap id="topicVO" type="com.douyuehan.doubao.model.vo.ArticleVO">
         <id column="id" property="id"/>
         <result column="title" property="title"/>
         <result column="user_id" property="userId"/>
@@ -23,7 +23,7 @@
         t.view,t.collects,t.top,t.essence,
         t.create_time ,t.modify_time ,
         u.username,u.alias, u.avatar
-        FROM bms_post t
+        FROM bms_article t
         LEFT JOIN ums_user u
         ON t.user_id = u.id
         <where>
@@ -40,10 +40,10 @@
         </if>
     </select>
 
-    <select id="selectRecommend" resultType="com.douyuehan.doubao.model.entity.BmsPost">
+    <select id="selectRecommend" resultType="com.douyuehan.doubao.model.entity.BmsArticle">
         select *
-        from bms_post t
-        where t.id != #{id}
+        from bms_article t
+        where t.id != #{articleId}
         order by rand(), t.view
         limit 10
     </select>
@@ -62,7 +62,7 @@
         u.username,
         u.alias,
         u.avatar
-        FROM bms_post t
+        FROM bms_article t
         LEFT JOIN ums_user u
         ON t.user_id = u.id
         <where>

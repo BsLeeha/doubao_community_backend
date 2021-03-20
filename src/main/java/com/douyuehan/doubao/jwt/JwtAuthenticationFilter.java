@@ -18,27 +18,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         try {
-            if(isProtectedUrl(request)) {
-//                System.out.println(request.getMethod());
-                if(!request.getMethod().equals("OPTIONS"))
-                    request = JwtUtil.validateTokenAndAddUserIdToHeader(request);
+            // 受保护的非 OPTIONS 请求方式的 url 资源，校验 jwt 合法性
+            if (isProtectedUrl(request) && !request.getMethod().equals("OPTIONS")) {
+                request = JwtUtil.validateTokenAndAddUserIdToHeader(request);
             }
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            String message = e.getMessage();
+            // 截 20 位错误消息
+            if (message != null && message.length() > 20) message = message.substring(0, 20);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
             return;
         }
         filterChain.doFilter(request, response);
     }
 
     private boolean isProtectedUrl(HttpServletRequest request) {
-        List<String> protectedPaths = new ArrayList<String>();
+        List<String> protectedPaths = new ArrayList<>();
         protectedPaths.add("/ums/user/info");
         protectedPaths.add("/ums/user/update");
-        protectedPaths.add("/post/create");
-        protectedPaths.add("/post/update");
-        protectedPaths.add("/post/delete/*");
+        protectedPaths.add("/article/create");
+        protectedPaths.add("/article/update");
+        protectedPaths.add("/article/delete/*");
         protectedPaths.add("/comment/add_comment");
         protectedPaths.add("/relationship/subscribe/*");
         protectedPaths.add("/relationship/unsubscribe/*");
@@ -53,5 +54,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return bFind;
     }
-
 }

@@ -1,7 +1,8 @@
-package com.douyuehan.doubao.controller;
+package com.douyuehan.doubao.controller.tip;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.douyuehan.doubao.common.api.ApiResult;
+import com.douyuehan.doubao.controller.BaseController;
 import com.douyuehan.doubao.model.entity.BmsBillboard;
 import com.douyuehan.doubao.model.entity.BmsTip;
 import com.douyuehan.doubao.service.IBmsBillboardService;

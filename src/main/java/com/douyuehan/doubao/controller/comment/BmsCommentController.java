@@ -1,6 +1,7 @@
-package com.douyuehan.doubao.controller;
+package com.douyuehan.doubao.controller.comment;
 
 import com.douyuehan.doubao.common.api.ApiResult;
+import com.douyuehan.doubao.controller.BaseController;
 import com.douyuehan.doubao.model.dto.CommentDTO;
 import com.douyuehan.doubao.model.entity.BmsComment;
 import com.douyuehan.doubao.model.entity.UmsUser;

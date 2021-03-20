@@ -5,12 +5,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.douyuehan.doubao.common.exception.ApiAsserts;
 import com.douyuehan.doubao.jwt.JwtUtil;
 import com.douyuehan.doubao.mapper.BmsFollowMapper;
-import com.douyuehan.doubao.mapper.BmsTopicMapper;
+import com.douyuehan.doubao.mapper.BmsArticleMapper;
 import com.douyuehan.doubao.mapper.UmsUserMapper;
 import com.douyuehan.doubao.model.dto.LoginDTO;
 import com.douyuehan.doubao.model.dto.RegisterDTO;
 import com.douyuehan.doubao.model.entity.BmsFollow;
-import com.douyuehan.doubao.model.entity.BmsPost;
+import com.douyuehan.doubao.model.entity.BmsArticle;
 import com.douyuehan.doubao.model.entity.UmsUser;
 import com.douyuehan.doubao.model.vo.ProfileVO;
 import com.douyuehan.doubao.service.IUmsUserService;
@@ -31,7 +31,7 @@ import java.util.Date;
 public class IUmsUserServiceImpl extends ServiceImpl<UmsUserMapper, UmsUser> implements IUmsUserService {
 
     @Autowired
-    private BmsTopicMapper bmsTopicMapper;
+    private BmsArticleMapper bmsArticleMapper;
     @Autowired
     private BmsFollowMapper bmsFollowMapper;
 
@@ -56,10 +56,12 @@ public class IUmsUserServiceImpl extends ServiceImpl<UmsUserMapper, UmsUser> imp
 
         return addUser;
     }
+
     @Override
     public UmsUser getUserByUsername(String username) {
         return baseMapper.selectOne(new LambdaQueryWrapper<UmsUser>().eq(UmsUser::getUsername, username));
     }
+
     @Override
     public String executeLogin(LoginDTO dto) {
         String token = null;
@@ -82,7 +84,7 @@ public class IUmsUserServiceImpl extends ServiceImpl<UmsUserMapper, UmsUser> imp
         UmsUser user = baseMapper.selectById(id);
         BeanUtils.copyProperties(user, profile);
         // 用户文章数
-        int count = bmsTopicMapper.selectCount(new LambdaQueryWrapper<BmsPost>().eq(BmsPost::getUserId, id));
+        int count = bmsArticleMapper.selectCount(new LambdaQueryWrapper<BmsArticle>().eq(BmsArticle::getUserId, id));
         profile.setTopicCount(count);
 
         // 粉丝数

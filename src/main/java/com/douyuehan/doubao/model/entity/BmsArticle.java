@@ -13,10 +13,10 @@ import java.util.Date;
 
 @Data
 @Builder
-@TableName("bms_post")
+@TableName("bms_article")
 @AllArgsConstructor
 @NoArgsConstructor
-public class BmsPost implements Serializable {
+public class BmsArticle implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,17 +25,19 @@ public class BmsPost implements Serializable {
      */
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     private String id;
+
     /**
      * 标题
      */
     @NotBlank(message = "标题不可以为空")
     @TableField(value = "title")
     private String title;
+
     /**
      * markdown
      */
     @NotBlank(message = "内容不可以为空")
-    @TableField("`content`")
+    @TableField("content")
     private String content;
 
     /**

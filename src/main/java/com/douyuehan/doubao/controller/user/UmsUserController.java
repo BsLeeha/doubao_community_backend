@@ -1,14 +1,15 @@
-package com.douyuehan.doubao.controller;
+package com.douyuehan.doubao.controller.user;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.douyuehan.doubao.common.api.ApiResult;
+import com.douyuehan.doubao.controller.BaseController;
 import com.douyuehan.doubao.model.dto.LoginDTO;
 import com.douyuehan.doubao.model.dto.RegisterDTO;
-import com.douyuehan.doubao.model.entity.BmsPost;
+import com.douyuehan.doubao.model.entity.BmsArticle;
 import com.douyuehan.doubao.model.entity.UmsUser;
-import com.douyuehan.doubao.service.IBmsPostService;
+import com.douyuehan.doubao.service.IBmsArticleService;
 import com.douyuehan.doubao.service.IUmsUserService;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class UmsUserController extends BaseController {
     @Resource
     private IUmsUserService iUmsUserService;
     @Resource
-    private IBmsPostService iBmsPostService;
+    private IBmsArticleService iBmsArticleService;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ApiResult<Map<String, Object>> register(@Valid @RequestBody RegisterDTO dto) {
@@ -69,8 +70,8 @@ public class UmsUserController extends BaseController {
         Map<String, Object> map = new HashMap<>(16);
         UmsUser user = iUmsUserService.getUserByUsername(username);
         Assert.notNull(user, "用户不存在");
-        Page<BmsPost> page = iBmsPostService.page(new Page<>(pageNo, size),
-                new LambdaQueryWrapper<BmsPost>().eq(BmsPost::getUserId, user.getId()));
+        Page<BmsArticle> page = iBmsArticleService.page(new Page<>(pageNo, size),
+                new LambdaQueryWrapper<BmsArticle>().eq(BmsArticle::getUserId, user.getId()));
         map.put("user", user);
         map.put("topics", page);
         return ApiResult.success(map);
