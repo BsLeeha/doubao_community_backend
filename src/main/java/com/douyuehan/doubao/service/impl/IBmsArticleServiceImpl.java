@@ -159,6 +159,6 @@ public class IBmsArticleServiceImpl extends ServiceImpl<BmsArticleMapper, BmsArt
     public boolean updateById(BmsArticle entity) {
         // 修改时间
         entity.setModifyTime(new Date());
-        return updateById(entity);
+        return this.baseMapper.updateById(entity) == 1;
     }
 }
