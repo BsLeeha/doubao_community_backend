@@ -18,6 +18,8 @@ import com.douyuehan.doubao.service.IBmsArticleService;
 import com.douyuehan.doubao.service.IBmsTagService;
 import com.douyuehan.doubao.service.IBmsTopicTagService;
 import com.douyuehan.doubao.service.IUmsUserService;
+import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.tokenizer.StandardTokenizer;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -128,13 +130,21 @@ public class IBmsArticleServiceImpl extends ServiceImpl<BmsArticleMapper, BmsArt
         return this.baseMapper.selectRecommend(articleId);
     }
 
+    /**
+     * 全文搜索
+     *
+     * @param keyword 搜索词
+     * @param page 分页参数
+     * @return 分页后含搜索词的文章列表
+     * @author liyonghai
+     * @date 2021/3/21 9:48
+     */
     @Override
     public Page<ArticleVO> searchByKey(String keyword, Page<ArticleVO> page) {
+        // 对搜索关键词进行分词、正则化
+        String regExpSearchStr = getRegExpSearchStr(keyword);
         // 查询文章
-        Page<ArticleVO> iPage = this.baseMapper.searchByKey(page, keyword);
-        // 查询文章的标签
-        setTopicTags(iPage);
-        return iPage;
+        return this.baseMapper.searchByKey(page, regExpSearchStr);
     }
 
     private void setTopicTags(Page<ArticleVO> iPage) {
@@ -160,5 +170,34 @@ public class IBmsArticleServiceImpl extends ServiceImpl<BmsArticleMapper, BmsArt
         // 修改时间
         entity.setModifyTime(new Date());
         return this.baseMapper.updateById(entity) == 1;
+    }
+
+    /**
+     * 通过分词组件，将搜索词转为 mysql 正则搜索词，配合 regexp 关键词可进行全文搜索
+     * 例如，"我是一只小小鸟，怎么飞也飞不高" 通过 HanLP 分词及处理后，转换为 ".*(我|是|一|只|小小鸟|，|怎么|飞|也|飞|不|高|！).*'"
+     *
+     * @param searchStr 搜索词
+     * @return java.lang.String
+     * @author liyonghai
+     * @date 2021/3/21 9:45
+     */
+    private String getRegExpSearchStr(String searchStr) {
+        // 1.分词
+        List<Term> terms = StandardTokenizer.segment(searchStr);
+
+        // 2. 拼接查询正则语句
+        StringBuilder sb = new StringBuilder(".*(");
+        for (int i = 0; i < terms.size(); i++) {
+            String term = terms.get(i).word;
+            // 是否最后一个词原
+            if (i != terms.size() - 1) {
+                sb.append(term + "|");
+            } else {
+                sb.append(term);
+            }
+        }
+        sb.append(").*");
+
+        return sb.toString();
     }
 }

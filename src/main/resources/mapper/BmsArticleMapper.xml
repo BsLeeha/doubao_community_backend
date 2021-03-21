@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.douyuehan.doubao.mapper.BmsArticleMapper">
+    <!-- 不包含标签列表的结果集映射 -->
     <resultMap id="topicVO" type="com.douyuehan.doubao.model.vo.ArticleVO">
         <id column="id" property="id"/>
         <result column="title" property="title"/>
@@ -15,6 +16,31 @@
         <result column="username" property="username"/>
         <result column="alias" property="alias"/>
         <result column="avatar" property="avatar"/>
+    </resultMap>
+
+    <!-- 包含标签列表的结果集映射 -->
+    <resultMap id="bmsArticleTagsResult" type="com.douyuehan.doubao.model.vo.ArticleVO">
+        <id property="id" column="article_id"/>
+        <result property="title" column="title"/>
+        <result property="comments" column="comments"/>
+        <result property="top" column="top"/>
+        <result property="essence" column="essence"/>
+        <result property="collects" column="collects"/>
+        <result property="view" column="view"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="avatar" column="avatar"/>
+        <result property="alias" column="alias"/>
+        <result property="username" column="username"/>
+        <collection property="tags" ofType="com.douyuehan.doubao.model.entity.BmsTag" resultMap="bmsTagResult"/>
+    </resultMap>
+
+    <!-- 标签的结果集映射 -->
+    <resultMap id="bmsTagResult" type="com.douyuehan.doubao.model.entity.BmsTag">
+        <id property="id" column="tag_id"/>
+        <result property="name" column="tag_name"/>
+        <result property="topicCount" column="tag_cnt"/>
     </resultMap>
 
     <select id="selectListAndPage" resultMap="topicVO">
@@ -48,31 +74,16 @@
         limit 10
     </select>
 
-    <select id="searchByKey" resultMap="topicVO">
-        SELECT t.id,
-        t.title,
-        t.user_id,
-        t.comments,
-        t.view,
-        t.collects,
-        t.top,
-        t.essence,
-        t.create_time,
-        t.modify_time,
-        u.username,
-        u.alias,
-        u.avatar
-        FROM bms_article t
-        LEFT JOIN ums_user u
-        ON t.user_id = u.id
-        <where>
-            <if test="keyword!=null">
-                and t.title like CONCAT('%','${keyword}')
-                or t.title like CONCAT('${keyword}','%')
-                or t.title like CONCAT('%','${keyword}','%')
-                or t.title = #{keyword}
-            </if>
-        </where>
-        order by t.view desc, t.create_time desc
+    <!-- 根据关键词搜索文章列表，浏览数最多，创建时间最近的放前面 -->
+    <select id="searchByKey" resultMap="bmsArticleTagsResult">
+        select t1.id as article_id, t1.title, t1.comments, t1.top, t1.essence, t1.collects, t1.view,
+          t1.create_time, t1.modify_time, t2.id as user_id, t2.avatar,
+          t2.alias, t2.username, t4.id as tag_id, t4.name as tag_name, t4.topic_count as tag_cnt
+        from bms_article t1
+        left join ums_user t2 on t1.user_id = t2.id
+        left join bms_post_tag t3 on t1.id = t3.topic_id
+        left join bms_tag t4 on t3.tag_id = t4.id
+        where t1.title regexp #{keyword} or t1.content regexp #{keyword}
+        order by t1.view desc, t1.create_time desc
     </select>
 </mapper>
