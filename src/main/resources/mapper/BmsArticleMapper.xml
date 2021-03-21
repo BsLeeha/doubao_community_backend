@@ -83,7 +83,7 @@
         left join ums_user t2 on t1.user_id = t2.id
         left join bms_post_tag t3 on t1.id = t3.topic_id
         left join bms_tag t4 on t3.tag_id = t4.id
-        where t1.title regexp #{keyword} or t1.content regexp #{keyword}
+        where t1.title regexp #{keyword} or t4.name regexp #{keyword} or t1.content regexp #{keyword}
         order by t1.view desc, t1.create_time desc
     </select>
 </mapper>
